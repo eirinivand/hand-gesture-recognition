@@ -31,6 +31,8 @@ def opencv_streamer():
             streamer.start_streaming()
 
         cv2.waitKey(30)
+        frame = cv.imencode('.jpg', frame)[1].tobytes()
+        yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 
 def video_stream():
