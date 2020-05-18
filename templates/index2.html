@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script async src="https://huningxin.github.io/opencv.js/build/asm.js/opencv.js" onload="opencvIsReady()"></script>
+    <title>Hand Gesture Recognition</title>
+</head>
+<body>
+
+
+<h1>Hand Tracking and Gesture Recognition</h1>
+<h1>OpenCV Camera</h1>
+<video id="video" width="300" height="225"></video>
+<canvas id="canvasOutput"></canvas>
+<script>
+    const video = document.getElementById('video');
+    const actionBtn = document.getElementById('actionBtn');
+    width = 300;
+    height = 225;
+    const FPS = 30;
+    let stream;
+    let streaming = false;
+
+    function startCamera() {
+        if (streaming) return;
+        navigator.mediaDevices.getUserMedia({video: true, audio: false})
+            .then(function (s) {
+                video.srcObject = s;
+            })
+            .catch(function (err) {
+                console.log("An error occured! " + err);
+            });
+
+        video.addEventListener("canplay", function (ev) {
+            if (!streaming) {
+                height = video.videoHeight / (video.videoWidth / width);
+                video.setAttribute("width", width);
+                video.setAttribute("height", height);
+                streaming = true;
+                vc = new cv.VideoCapture(video);
+            }
+            startVideoProcessing();
+        }, false);
+    }
+
+    function startVideoProcessing() {
+        if (!streaming) {
+            console.warn("Please startup your webcam");
+            return;
+        }
+        stopVideoProcessing();
+        src = new cv.Mat(height, width, cv.CV_8UC4);
+        dstC1 = new cv.Mat(height, width, cv.CV_8UC1);
+        dstC3 = new cv.Mat(height, width, cv.CV_8UC3);
+        dstC4 = new cv.Mat(height, width, cv.CV_8UC4);
+        requestAnimationFrame(processVideo);
+    }
+
+    function opencvIsReady() {
+        console.log('OpenCV.js is ready');
+        startCamera();
+    }
+</script>
+</body>
+</html>
