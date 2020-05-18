@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return render_template("index2.html")
+    return render_template("index.html")
 
 
 @app.route('/mask')
@@ -16,7 +16,7 @@ def mask():
 @app.route("/camera-feed", methods=['POST', 'GET'])
 def camera_feed():
     import htgr
-    return Response(htgr.video_stream(),
+    return Response(htgr.opencv_streamer(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     # return htgr.video_stream()
 
