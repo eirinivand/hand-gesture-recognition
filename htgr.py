@@ -1,5 +1,6 @@
 from __future__ import print_function
-
+from flask_opencv_streamer.streamer import Streamer
+import cv2
 import sys
 import time
 import numpy as np
@@ -10,9 +11,26 @@ from flask import Blueprint
 
 bp = Blueprint('video', __name__, url_prefix='/video')
 
-face_cascade = cv.CascadeClassifier('cascade_files/hand.xml')
 scaling_factor = 0.8
-capture = cv.VideoCapture(0)
+
+
+def opencv_streamer():
+    port = 3030
+    require_login = False
+    streamer = Streamer(port, require_login)
+
+    # Open video device 0
+    video_capture = cv2.VideoCapture(0)
+
+    while True:
+        _, frame = video_capture.read()
+
+        streamer.update_frame(frame)
+
+        if not streamer.is_streaming:
+            streamer.start_streaming()
+
+        cv2.waitKey(30)
 
 
 def video_stream():
@@ -178,10 +196,12 @@ def draw_hand_0():
         frame = cv.imencode('.jpg', img)[1].tobytes()
         yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+
 points = []
 nPoints = 22
 protoFile = "./files/hand/pose_deploy.prototxt"
 weightsFile = "./files/hand/pose_iter_102000.caffemodel"
+
 
 def draw_hand():
     # while True:
@@ -219,6 +239,6 @@ def draw_hand():
             cv.line(frame, points[partA], points[partB], (0, 255, 255), 2)
             cv.circle(frame, points[partA], 8, (0, 0, 255), thickness=-1, lineType=cv.FILLED)
     endtime = time.time()
-    print(strarttime-endtime)
+    print(strarttime - endtime)
     frame_encoded = cv.imencode('.jpg', frame)[1].tobytes()
     yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame_encoded + b'\r\n')

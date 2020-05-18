@@ -22,21 +22,21 @@ POSE_PAIRS = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [0
 
 threshold = 0.2
 
-cap = cv2.VideoCapture(0)
-hasFrame, frame = cap.read()
-
-frameWidth = frame.shape[1]
-frameHeight = frame.shape[0]
-
-aspect_ratio = frameWidth / frameHeight
-
-inHeight = 368
-inWidth = int(((aspect_ratio * inHeight) * 8) // 8)
-
-net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
 
 
 def keypoint():
+    cap = cv2.VideoCapture(0)
+    hasFrame, frame = cap.read()
+
+    frameWidth = frame.shape[1]
+    frameHeight = frame.shape[0]
+
+    aspect_ratio = frameWidth / frameHeight
+
+    inHeight = 368
+    inWidth = int(((aspect_ratio * inHeight) * 8) // 8)
+
+    net = cv2.dnn.readNetFromCaffe(protoFile, weightsFile)
     k = 0
     while True:
         k += 1
