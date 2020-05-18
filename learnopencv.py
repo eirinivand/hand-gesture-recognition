@@ -6,12 +6,13 @@ import urllib.request
 from flask import Blueprint
 
 from kaggle.api.kaggle_api_extended import KaggleApi
+
 bp = Blueprint('bbb', __name__, url_prefix='/bbb')
 
 api = KaggleApi()
 api.authenticate()
 
-api.dataset_download_file('changethetuneman/openpose-model','pose_iter_102000.caffemodel', path="files/hand/")
+api.dataset_download_file('changethetuneman/openpose-model', 'pose_iter_102000.caffemodel', path="files/hand/")
 
 protoFile = "./files/hand/pose_deploy.prototxt"
 weightsFile = "./files/hand/pose_iter_102000.caffemodel"
@@ -21,7 +22,6 @@ POSE_PAIRS = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [0
               [0, 13], [13, 14], [14, 15], [15, 16], [0, 17], [17, 18], [18, 19], [19, 20]]
 
 threshold = 0.2
-
 
 
 def keypoint():

@@ -3,9 +3,112 @@
 <head>
     <script async src="https://huningxin.github.io/opencv.js/build/asm.js/opencv.js" onload="opencvIsReady()"></script>
     <title>Hand Gesture Recognition</title>
-  </head>
-  <body>
-    <h1>Hand Tracking and Gesture Recognition</h1>
-    <img src="{{ url_for('camera_feed') }}">
-  </body>
+</head>
+<body>
+<h1>Hand Tracking and Gesture Recognition</h1>
+{#    <img src="{{ url_for('camera_feed') }}">#}
+<video id="video" width="300" height="225"></video>
+<canvas id="canvasOutput"></canvas>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type=text/javascript>
+    $(function () {
+        $('a#test').bind('click', function () {
+            $.getJSON('/bacground_process_test',
+                function (data) {
+
+                });
+            return false;
+        });
+    });
+</script>
+<script>
+    const video = document.getElementById('video');
+    const actionBtn = document.getElementById('actionBtn');
+    width = 300;
+    height = 225;
+    const FPS = 30;
+    let stream;
+    let streaming = false;
+
+    function startCamera() {
+        if (streaming) return;
+        navigator.mediaDevices.getUserMedia({video: true, audio: false})
+            .then(function (s) {
+                video.srcObject = s;
+            })
+            .catch(function (err) {
+                console.log("An error occured! " + err);
+            });
+
+        video.addEventListener("canplay", function (ev) {
+            if (!streaming) {
+                height = video.videoHeight / (video.videoWidth / width);
+                video.setAttribute("width", width);
+                video.setAttribute("height", height);
+                streaming = true;
+                vc = new cv.VideoCapture(video);
+            }
+            startVideoProcessing();
+        }, false);
+    }
+
+    const getFrame = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        return canvas.toDataURL('image/png');
+    }
+
+    function startVideoProcessing() {
+        if (!streaming) {
+            console.warn("Please startup your webcam");
+            return;
+        }
+        const data = canvas.toDataURL('image/png');
+        return data;
+    }
+
+    function opencvIsReady() {
+        console.log('OpenCV.js is ready');
+        startCamera();
+    }
+</script>
+<script>
+    // get video dom element
+    const video = document.querySelector('video');
+
+    // get img dom element
+    const img = document.querySelector('img');
+
+    // request access to webcam
+    navigator.mediaDevices.getUserMedia({video: {width: 426, height: 240}}).then((stream) => video.srcObject = stream);
+
+    // returns a frame encoded in base64
+    const getFrame = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        const data = canvas.toDataURL('image/png');
+        return data;
+    }
+
+    const WS_URL = 'ws://localhost:8000/ws'; // Change this if you serve on different server or port
+    const FPS = 3;
+    const ws = new WebSocket(WS_URL);
+
+    ws.onopen = () => {
+        console.log(`Connected to ${WS_URL}`);
+        setInterval(() => {
+            ws.send(getFrame());
+        }, 1000 / FPS);
+    }
+
+    ws.onmessage = message => {
+        // set the base64 string to the src tag of the image
+        img.src = message.data;
+    }
+</script>
+</body>
 </html>
