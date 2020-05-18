@@ -13,7 +13,7 @@ def mask():
     return render_template("mask.html")
 
 
-import htgr, learnopencv
+
 
 app.register_blueprint(htgr.bp)
 app.add_url_rule('/', endpoint='video')
@@ -27,6 +27,7 @@ def gen(camera):
 
 @app.route("/camera-feed", methods=['POST', 'GET'])
 def camera_feed():
+    import htgr
     return Response(htgr.video_stream(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     # return htgr.video_stream()
@@ -34,6 +35,7 @@ def camera_feed():
 
 @app.route("/mask-feed", methods=['POST', 'GET'])
 def mask_feed():
+    import learnopencv
     return Response(learnopencv.keypoint(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
     # return htgr.video_stream()
