@@ -22,7 +22,7 @@ POSE_PAIRS = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [0
 
 threshold = 0.2
 
-cap = cv2.VideoCapture(-1)
+cap = cv2.VideoCapture(0)
 hasFrame, frame = cap.read()
 
 frameWidth = frame.shape[1]
