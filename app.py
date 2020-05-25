@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, Response, request
 
-from visual_manipulation import grayscale
+# from visual_manipulation import grayscale
 
 app = Flask(__name__)
 import urllib3
