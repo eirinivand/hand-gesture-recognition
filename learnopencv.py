@@ -5,15 +5,15 @@ import numpy as np
 import base64
 from flask import Blueprint
 
-# from kaggle.api.kaggle_api_extended import KaggleApi
+from kaggle.api.kaggle_api_extended import KaggleApi
 
 bp = Blueprint('bbb', __name__, url_prefix='/bbb')
 
-# api = KaggleApi()
-# api.authenticate()
+api = KaggleApi()
+api.authenticate()
 
-# api.dataset_download_file('changethetuneman/openpose-model', 'pose_iter_102000.caffemodel', path="files/hand/")
-#
+api.dataset_download_file('changethetuneman/openpose-model', 'pose_iter_102000.caffemodel', path="files/hand/")
+
 protoFile = "./files/hand/pose_deploy.prototxt"
 weightsFile = "./files/hand/pose_iter_102000.caffemodel"
 
